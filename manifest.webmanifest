@@ -1,0 +1,18 @@
+{
+  "name": "Lunéa – suivi du cycle",
+  "short_name": "Lunéa",
+  "start_url": "/lunea/",
+  "scope": "/lunea/",
+  "display": "standalone",
+  "background_color": "#FFF7F8",
+  "theme_color": "#E2556F",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/lunea/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
