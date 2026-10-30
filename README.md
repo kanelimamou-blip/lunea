@@ -58,3 +58,11 @@ src/
 Stack : Expo SDK 58, React Native 0.88, TypeScript, Expo Router, react-native-svg, tweetnacl, Vitest.
 
 Lunéa ne remplace pas un avis médical et n'est pas une méthode de contraception.
+
+## Version web (GitHub Pages)
+
+Chaque push sur `main` lance l'action « Publier la version web » : vérification des types, tests, export web, puis publication sur la branche `gh-pages`. L'app est servie à `https://<utilisateur>.github.io/lunea/` et peut être installée sur l'écran d'accueil (iPhone : Partager › Sur l'écran d'accueil ; Android : menu › Installer l'application). Elle fonctionne hors connexion.
+
+Sur le web, les données restent chiffrées dans le navigateur de l'appareil (clé dans IndexedDB). Les rappels programmés et le verrouillage biométrique ne sont disponibles que dans l'app mobile.
+
+Si le dépôt est renommé, mettez à jour `experiments.baseUrl` dans `app.json` et `EXPO_BASE_URL` dans `.github/workflows/deploy-web.yml`.

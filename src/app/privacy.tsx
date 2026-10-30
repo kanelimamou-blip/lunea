@@ -1,6 +1,6 @@
 import * as LocalAuthentication from 'expo-local-authentication';
 import { router } from 'expo-router';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { Body, Button, Card, H2, Muted, Screen, ToggleRow } from '../components/ui';
 import { exportJson } from '../services/report';
 import { useStore } from '../storage/store';
@@ -21,24 +21,28 @@ export default function Privacy() {
     updateSettings({ lockEnabled: on });
   };
 
+  const doWipe = () => wipe().then(() => router.replace('/onboarding'));
   const confirmWipe = () =>
-    Alert.alert('Tout effacer ?', 'Toutes vos données et la clé de chiffrement seront supprimées définitivement de ce téléphone.', [
+    Platform.OS === 'web'
+      ? window.confirm('Tout effacer ? Vos données seront supprimées définitivement de ce navigateur.') && doWipe()
+      : Alert.alert('Tout effacer ?', 'Toutes vos données et la clé de chiffrement seront supprimées définitivement de ce téléphone.', [
       { text: 'Annuler', style: 'cancel' },
-      { text: 'Effacer', style: 'destructive', onPress: () => wipe().then(() => router.replace('/onboarding')) },
+      { text: 'Effacer', style: 'destructive', onPress: doWipe },
     ]);
 
   return (
     <Screen>
       <Card>
         <H2>Vos données vous appartiennent</H2>
-        <Body>• Aucune inscription, aucun compte, aucun serveur : tout est stocké sur ce téléphone.</Body>
-        <Body>• Les données sont chiffrées (XSalsa20-Poly1305) avec une clé gardée dans le coffre sécurisé du téléphone et exclue des sauvegardes.</Body>
+        <Body>• Aucune inscription, aucun compte, aucun serveur : tout est stocké sur {Platform.OS === 'web' ? 'cet appareil, dans ce navigateur' : 'ce téléphone'}.</Body>
+        <Body>• Les données sont chiffrées (XSalsa20-Poly1305) avec une clé {Platform.OS === 'web' ? 'propre à ce navigateur' : 'gardée dans le coffre sécurisé du téléphone et exclue des sauvegardes'}.</Body>
+        {Platform.OS === 'web' && <Body>• Sur le web, effacer les données du site dans le navigateur efface aussi vos données Lunéa : exportez-les régulièrement.</Body>}
         <Body>• Pas de publicité, pas de traceurs, aucune donnée revendue ou partagée.</Body>
         <Body>• Les rappels sont calculés et programmés sur l'appareil.</Body>
       </Card>
-      <Card>
+      {Platform.OS !== 'web' && <Card>
         <ToggleRow label="Verrouiller l'application" hint="Face ID, empreinte ou code à chaque ouverture" value={data.settings.lockEnabled} onChange={toggleLock} />
-      </Card>
+      </Card>}
       <Card>
         <H2>Export</H2>
         <Muted>Fichier JSON lisible, pour garder une copie ou changer d'application. Attention : ce fichier n'est pas chiffré.</Muted>

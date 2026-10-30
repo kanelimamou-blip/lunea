@@ -1,6 +1,7 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { File, Paths } from 'expo-file-system';
+import { Platform } from 'react-native';
 import { MOODS, SYMPTOMS, label } from '../domain/catalog';
 import { addDays, formatShort, today } from '../domain/dates';
 import { computeInsights } from '../domain/insights';
@@ -54,12 +55,30 @@ export function reportHtml(data: AppData, months = 6): string {
 }
 
 export async function shareReport(data: AppData, months = 6): Promise<void> {
+  if (Platform.OS === 'web') {
+    // The browser's print dialog offers "Save as PDF".
+    const w = window.open('', '_blank');
+    if (!w) throw new Error('Autorisez les fenêtres pop-up pour ce site.');
+    w.document.write(reportHtml(data, months));
+    w.document.close();
+    setTimeout(() => w.print(), 500);
+    return;
+  }
   const { uri } = await Print.printToFileAsync({ html: reportHtml(data, months) });
   await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Partager le rapport' });
 }
 
 /** Plain JSON export so the data is never locked in. */
 export async function exportJson(data: AppData): Promise<void> {
+  if (Platform.OS === 'web') {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lunea-export-${today()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    return;
+  }
   const file = new File(Paths.cache, `lunea-export-${today()}.json`);
   if (file.exists) file.delete();
   file.create();

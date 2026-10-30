@@ -25,7 +25,13 @@
       "allowBackup": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "output": "single",
+      "name": "Lunéa",
+      "shortName": "Lunéa",
+      "lang": "fr",
+      "themeColor": "#E2556F",
+      "backgroundColor": "#FFF7F8"
     },
     "scheme": "lunea",
     "backgroundColor": "#FFF7F8",
@@ -51,7 +57,8 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": false
+      "typedRoutes": false,
+      "baseUrl": "/lunea"
     }
   }
 }

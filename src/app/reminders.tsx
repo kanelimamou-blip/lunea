@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card, Chip, H2, Muted, Screen, ToggleRow, styles as ui } from '../components/ui';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import type { ReminderSettings } from '../domain/types';
 import { requestPermission } from '../services/reminders';
 import { useStore } from '../storage/store';
@@ -13,6 +13,7 @@ export default function Reminders() {
   const [granted, setGranted] = useState(true);
 
   useEffect(() => {
+    if (Platform.OS === 'web') return;
     requestPermission().then(setGranted).catch(() => setGranted(false));
   }, []);
 
@@ -20,6 +21,7 @@ export default function Reminders() {
 
   return (
     <Screen>
+      {Platform.OS === 'web' && <Card><Muted>Les rappels programmés fonctionnent dans l'application mobile. Dans la version web, vos dates à venir s'affichent sur l'écran d'accueil.</Muted></Card>}
       {!granted && <Card><Muted>Les notifications sont désactivées pour Lunéa dans les réglages du téléphone.</Muted></Card>}
       <Card>
         <ToggleRow label="Règles à venir" hint="2 jours avant et le jour prévu" value={r.periodSoon} onChange={(v) => set({ periodSoon: v })} />

@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { predict, type Prediction } from '../domain/cycle';
 import { today, type ISODate } from '../domain/dates';
@@ -45,7 +46,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     saveTimer.current = setTimeout(() => {
       saveData(next).catch((e) => console.warn(e));
       syncReminders(next, predict(next, today())).catch((e) => console.warn(e));
-    }, 400);
+    }, Platform.OS === 'web' ? 0 : 400);
   }, []);
 
   const value = useMemo<Store>(
